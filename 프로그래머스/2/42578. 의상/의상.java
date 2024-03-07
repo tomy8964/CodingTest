@@ -7,24 +7,11 @@ class Solution {
         for (String[] clothe : clothes) {
             map.put(clothe[1], map.getOrDefault(clothe[1], 0) + 1);
         }
-
-        int con = 1;
         for (String key : map.keySet()) {
             Integer nums = map.get(key);
-            int tmp = 0;
-            for (int i = 0; i <= 1; i++) {
-                tmp += combi(nums, i);
-            }
-            con *= tmp;
+            answer *= nums + 1;
         }
 
-        return con - 1;
-    }
-
-    public static int combi(int n, int r) {
-        if (r == 0 || r == n)
-            return 1;
-        else
-            return combi(n - 1, r - 1) + combi(n - 1, r);
+        return answer - 1;
     }
 }
