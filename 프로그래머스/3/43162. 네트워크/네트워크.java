@@ -2,13 +2,6 @@ import java.util.*;
 class Solution {
     static boolean[] visited;
 
-    public static void main(String[] args) {
-
-        // n	computers	                        return
-        // 3	[[1, 1, 0], [1, 1, 0], [0, 0, 1]]	2
-        System.out.println(solution(3, new int[][]{{1, 1, 0}, {1, 1, 0}, {0, 0, 1}}));
-    }
-
     public static int solution(int n, int[][] computers) {
         int answer = 0;
         List<List<Integer>> list = new ArrayList<>();
@@ -34,8 +27,6 @@ class Solution {
                 answer++;
             }
         }
-
-
         return answer;
     }
 
