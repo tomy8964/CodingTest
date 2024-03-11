@@ -2,15 +2,12 @@ import java.util.*;
 class Solution {
 
     public int solution(int[][] sizes) {
-        for (int[] wallet : sizes) {
-            Arrays.sort(wallet);
+        int length = 0, height = 0;
+        for (int[] card : sizes) {
+            length = Math.max(length, Math.max(card[0], card[1]));
+            height = Math.max(height, Math.min(card[0], card[1]));
         }
-        int maxW = -1;
-        int maxH = -1;
-        for (int[] wallet : sizes) {
-            maxW = Math.max(maxW, wallet[0]);
-            maxH = Math.max(maxH, wallet[1]);
-        }
-        return maxW * maxH;
+        int answer = length * height;
+        return answer;
     }
 }
