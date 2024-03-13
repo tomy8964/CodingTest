@@ -10,7 +10,6 @@ class Solution {
         int index = 0;
         for (int i = index; i < routes.length; i++) {
             if (visited[i]) continue;
-            int start = routes[i][0];
             int end = routes[i][1];
             visited[i] = true;
             for (int j = i + 1; j < routes.length; j++) {
