@@ -2,36 +2,26 @@ import java.util.*;
 class Solution {
 
     public int solution(int[][] jobs) {
-        int answer = 0;
-
         List<Integer> time = new ArrayList<>();
+        Arrays.sort(jobs, Comparator.comparingInt(o -> o[0]));
         Queue<Job> queue = new PriorityQueue<>(Comparator.comparingInt(o -> o.processTime));
-        for (int[] job : jobs) {
-            queue.add(new Job(job[0], job[1]));
-        }
 
         int currentTime = 0;
-        while (!queue.isEmpty()) {
-            int size = queue.size();
-            boolean canProcess = false;
-            Queue<Job> tmpQueue = new PriorityQueue<>(Comparator.comparingInt(o -> o.processTime));
-            while(!queue.isEmpty()) {
-                Job poll = queue.poll();
-                if (poll.startTime <= currentTime) {
-                    currentTime += poll.processTime;
-                    time.add(currentTime - poll.startTime);
-                    canProcess = true;
-                    while (!queue.isEmpty()) {
-                        Job poll1 = queue.poll();
-                        tmpQueue.add(poll1);
-                    }
-                    break;
-                } else {
-                    tmpQueue.add(poll);
+        int finishedJobs = 0;
+        boolean[] finished = new boolean[jobs.length];
+        while (finishedJobs < jobs.length) {
+            for (int i = 0; i < jobs.length; i++) {
+                if (jobs[i][0] <= currentTime && !finished[i]) {
+                    queue.add(new Job(jobs[i][0], jobs[i][1]));
+                    finished[i] = true;
                 }
             }
-            queue = tmpQueue;
-            if (!canProcess) currentTime++;
+            if (!queue.isEmpty()) {
+                Job poll = queue.poll();
+                currentTime += poll.processTime;
+                time.add(currentTime - poll.startTime);
+                finishedJobs++;
+            } else currentTime++;
         }
 
         int sum = 0;
@@ -39,9 +29,7 @@ class Solution {
             sum += num;
         }
 
-        answer = sum / jobs.length;
-
-        return answer;
+        return sum / jobs.length;
     }
 
     public class Job {
