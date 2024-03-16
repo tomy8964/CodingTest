@@ -23,8 +23,7 @@ class Solution {
         dp[0][0] = triangle[0][0];
 
         for (int i = 1; i < N; i++) {
-            int length = triangle[i].length;
-            for (int j = 0; j < length; j++) {
+            for (int j = 0; j <= i; j++) {
                 if (j - 1 < 0) {
                     dp[i][j] = dp[i - 1][j] + triangle[i][j];
                 } else {
