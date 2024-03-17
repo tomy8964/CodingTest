@@ -3,18 +3,16 @@ class Solution {
 
     public int solution(int[] people, int limit) {
         int answer = 0;
-        int n = people.length;
 
         Arrays.sort(people);
 
         int index = 0;
-        for (int i = n - 1; i >= index; i--) {
+        for (int i = people.length - 1; i >= index; i--) {
             if (people[i] + people[index] <= limit) {
-                index++;
                 answer++;
+                index++;
             } else answer++;
         }
-
         return answer;
     }
 }
