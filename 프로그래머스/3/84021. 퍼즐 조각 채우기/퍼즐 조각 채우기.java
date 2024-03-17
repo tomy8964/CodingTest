@@ -2,133 +2,126 @@ import java.util.*;
 class Solution {
     static int[] xMove = {1, -1, 0, 0};
     static int[] yMove = {0, 0, 1, -1};
-    static int[][] table, game_board;
-    static boolean[][] tableVisited, boardVisited, visited;
-    static List<List<Point>> tableList;
-    static List<List<Point>> boardList;
-    static int len, answer;
+    static int length, answer;
 
     public int solution(int[][] game_board, int[][] table) {
-        this.table = table;
-        this.game_board = game_board;
         answer = 0;
-        len = game_board.length;
+        length = game_board.length;
 
-        tableList = new ArrayList<>();
-        boardList = new ArrayList<>();
-        tableVisited = new boolean[len][len];
-        boardVisited = new boolean[len][len];
+        // 보드의 빈공간 좌표 리스트
+        List<List<Point>> boardList = new ArrayList<>();
+        // 테이블에 있는 블록의 좌표 리스트
+        List<List<Point>> blockList = new ArrayList<>();
 
-
-        //game_board 0, 1 바꿔주기
-        for (int i = 0; i < len; i++) {
-            for (int j = 0; j < len; j++) {
-                if (game_board[i][j] == 1) {
-                    game_board[i][j] = 0;
-                } else game_board[i][j] = 1;
+        // board 1 <-> 0
+        for (int i = 0; i < length; i++) {
+            for (int j = 0; j < length; j++) {
+                game_board[i][j] = (game_board[i][j] == 0) ? 1 : 0;
             }
         }
 
-        for (int i = 0; i < len; i++) {
-            for (int j = 0; j < len; j++) {
-                // 블록 좌표 추출
-                if (table[i][j] == 1 && !tableVisited[i][j]) {
-                    bfs(new Point(i, j), table, tableVisited, tableList);
-                }
-                // 보드 빈공간 좌표 추출
+        boolean[][] boardVisited = new boolean[length][length];
+        boolean[][] tableVisited = new boolean[length][length];
+        for (int i = 0; i < length; i++) {
+            for (int j = 0; j < length; j++) {
+                // 보드 빈공간 좌표 리스트 채우기
                 if (game_board[i][j] == 1 && !boardVisited[i][j]) {
-                    bfs(new Point(i, j), game_board, boardVisited, boardList);
+                    bfs(game_board, boardVisited, new Point(i, j), boardList);
+                }
+                // 블록 좌표 리스트 채우기
+                if (table[i][j] == 1 && !tableVisited[i][j]) {
+                    bfs(table, tableVisited, new Point(i, j), blockList);
                 }
             }
         }
 
-        int table_size = tableList.size();
-        int board_size = boardList.size();
-        boolean[] visited = new boolean[table_size];
-
-        for (int i = 0; i < board_size; i++) {
-            for (int j = 0; j < table_size; j++) {
-                if (boardList.get(i).size() != tableList.get(j).size() || visited[j]) continue;
-                if (checkCanFill(tableList.get(j), boardList.get(i))) {
-                    visited[j] = true; //블록을 사용함
-                    answer += tableList.get(j).size();
-                    break;
+        boolean[] blockUsed = new boolean[blockList.size()];
+        // 블록의 빈좌표와 블록의 좌표를 비교하여 넣을 수 있는지 확인
+        for (List<Point> board : boardList) {
+            for (List<Point> block : blockList) {
+                if (!blockUsed[blockList.indexOf(block)]) {
+                    // 칸의 크기가 같은지 비교
+                    if (board.size() == block.size()) {
+                        if (checkFill(board, block)){
+                            blockUsed[blockList.indexOf(block)] = true;
+                            break;
+                        }
+                    }
                 }
             }
         }
+
         return answer;
     }
 
-    public boolean checkCanFill(List<Point> block, List<Point> board) {
-        // 같은 위치를 비교하기 위해 정렬
+    private boolean checkFill(List<Point> board, List<Point> block) {
+        // 비교하기 위한 좌표 정렬
         Collections.sort(board);
 
+        // 90도 씩 4번 회전하며 확인
         for (int i = 0; i < 4; i++) {
-            // 회전할 때마다 재정렬
+            // 회전했으므로 다시 정렬
             Collections.sort(block);
 
+            // 회전했으므로 다시 (0,0)으로 이동
             int startX = block.get(0).x;
             int startY = block.get(0).y;
 
-            //회전하면서 좌표가 바뀌기 때문에, 다시 (0,0) 기준으로 세팅
-            for (int j = 0; j < block.size(); j++) {
-                block.get(j).x -= startX;
-                block.get(j).y -= startY;
+            for (Point blockPoint : block) {
+                blockPoint.x -= startX;
+                blockPoint.y -= startY;
             }
 
-            boolean result = true;
-            // 좌표 비교
-            for (int p = 0; p < board.size(); p++) {
-                // 좌표가 다르다면 채울 수 없으므로
-                if (board.get(p).x != block.get(p).x || board.get(p).y != block.get(p).y) {
-                    result = false;
-                    break;
-                }
+            int count = 0;
+            for (int j = 0; j < board.size(); j++) {
+                Point point1 = board.get(j);
+                Point point2 = block.get(j);
+                if (point1.x == point2.x && point1.y == point2.y) count++;
+                else break;
             }
-
-            // 채웠다면
-            if (result) return result;
-                // 못채웠다면 회전해서 다시
-            else {
-                // 90도 회전 (x, y) -> (y, -x)
-                for (int z = 0; z < block.size(); z++) {
-                    int temp = block.get(z).x;
-                    block.get(z).x = block.get(z).y;
-                    block.get(z).y = -temp;
+            if (count == board.size()) {
+                answer += count;
+                return true;
+            } else {
+                // x,y -> y, -x
+                for (Point blockPoint : block) {
+                    int tmp = 0;
+                    tmp = blockPoint.x;
+                    blockPoint.x = blockPoint.y;
+                    blockPoint.y = -tmp;
                 }
             }
         }
         return false;
     }
 
-    private void bfs(Point start, int[][] board, boolean[][] visited, List<List<Point>> list) {
+    private void bfs(int[][] map, boolean[][] visited, Point start, List<List<Point>> list) {
         Queue<Point> queue = new LinkedList<>();
-        List<Point> subList = new ArrayList<>();
-        visited[start.x][start.y] = true;
-
+        List<Point> tmpList = new ArrayList<>();
+        // (0, 0) 좌표 기준으로 넣기 위해
+        tmpList.add(new Point(0, 0));
         queue.add(start);
-        subList.add(new Point(0, 0));
-
+        visited[start.x][start.y] = true;
         while (!queue.isEmpty()) {
             Point current = queue.poll();
             for (int i = 0; i < 4; i++) {
                 int newX = current.x + xMove[i];
                 int newY = current.y + yMove[i];
 
-                if (newX < 0 || newY < 0 || newX >= len || newY >= len) continue;
+                if (newX < 0 || newX >= length || newY < 0 || newY >= length || map[newX][newY] == 0) continue;
 
-                // 이어진 블록
-                if (!visited[newX][newY] && board[newX][newY] == 1) {
+                if (!visited[newX][newY]) {
                     visited[newX][newY] = true;
                     queue.add(new Point(newX, newY));
-                    subList.add(new Point((newX - start.x), (newY - start.y)));
+                    // (0, 0) 좌표 기준으로 넣기 위해
+                    tmpList.add(new Point(newX - start.x, newY - start.y));
                 }
             }
         }
-        list.add(subList);
+        list.add(tmpList);
     }
 
-    private static class Point implements Comparable<Point> {
+    public class Point implements Comparable<Point> {
         int x;
         int y;
 
@@ -137,6 +130,7 @@ class Solution {
             this.y = y;
         }
 
+        @Override
         public int compareTo(Point o) {
             int res = Integer.compare(this.x, o.x);
             if (res == 0) {
