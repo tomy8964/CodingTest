@@ -2,20 +2,19 @@ class Solution {
 
     public String solution(String number, int k) {
         StringBuilder sb = new StringBuilder();
-        int answerLen = number.length() - k;
-        char[] charArray = number.toCharArray();
 
-        int startIndex = 0;
-        for (int i = 0; i < answerLen; i++) {
-            char max = '0';
-            for (int j = startIndex; j <= i + k; j++) {
-                if (max < charArray[j]) {
-                    max = charArray[j];
-                    startIndex = j + 1;
+        int index = 0;
+        for (int i = 0; i < number.length() - k; i++) {
+            char max = ' ';
+            for (int j = index; j <= i + k; j++) {
+                if (max < number.charAt(j)) {
+                    max = number.charAt(j);
+                    index = j + 1;
                 }
             }
             sb.append(max);
         }
+
         return sb.toString();
     }
 }
