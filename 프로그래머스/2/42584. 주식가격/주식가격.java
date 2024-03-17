@@ -8,6 +8,7 @@ class Solution {
 
         for (int i = 0; i < prices.length; i++) {
             int currentPrice = prices[i];
+            // 가격이 떨어졌다.
             while (!stack.isEmpty() && prices[stack.peek()] > currentPrice) {
                 answer[stack.peek()] = i - stack.peek();
                 stack.pop();
@@ -15,8 +16,8 @@ class Solution {
             stack.push(i);
         }
 
-        while (!stack.isEmpty()) {
-            answer[stack.peek()] = prices.length - stack.peek() - 1;
+        while (!stack.empty()) {
+            answer[stack.peek()] = prices.length - 1 - stack.peek();
             stack.pop();
         }
 
