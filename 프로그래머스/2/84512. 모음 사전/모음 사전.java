@@ -1,25 +1,18 @@
+import java.util.*;
 class Solution {
-    static int answer;
-    static boolean find;
 
     public int solution(String word) {
-        answer = 0;
-        find = false;
-        String[] arr = {"A", "E", "I", "O", "U"};
-        dfs("", word, arr, 0);
-        return answer;
+        List<String> list = new ArrayList<>();
+        String aeiou = "AEIOU";
+        dfs(list, "", aeiou, 0);
+        return list.indexOf(word) + 1;
     }
 
-    public void dfs(String current, String word, String[] arr, int depth) {
-        if (word.equals(current)) {
-            find = true;
-            return;
-        }
+    public void dfs(List<String> list, String current, String aeiou, int depth) {
         if (depth == 5) return;
         for (int i = 0; i < 5; i++) {
-            if (find) return;
-            answer++;
-            dfs(current + arr[i], word, arr, depth + 1);
+            list.add(current + aeiou.charAt(i));
+            dfs(list, current + aeiou.charAt(i), aeiou, depth + 1);
         }
     }
 }
