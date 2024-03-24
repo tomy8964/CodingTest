@@ -25,7 +25,7 @@ class Solution {
         for(int i = 0; i<m; i++){
             Set<Integer> set = new HashSet<>();
             for(int j = 0; j<n; j++){
-                if(land[j][i] == 1 || land[j][i]==0) continue;
+                if(land[j][i]==0) continue;
                 set.add(land[j][i]);
             }
             int sum = 0;
