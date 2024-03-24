@@ -5,19 +5,17 @@ class Solution {
         StringBuilder sb = new StringBuilder();
         
         while(st.hasMoreTokens()){
-            String tk = st.nextToken();
+            String str = st.nextToken();
             
-            // 공백인 경우
-            if(tk.length() == 0){
-                sb.append(" ");
+            if(str.length() == 0) {
+                sb.append(str);
                 continue;
             }
             
             sb
-                .append(tk.substring(0,1).toUpperCase())
-                .append(tk.substring(1).toLowerCase());
+                .append(str.substring(0,1).toUpperCase())
+                .append(str.substring(1).toLowerCase());
         }
-        
         return sb.toString();
     }
 }
