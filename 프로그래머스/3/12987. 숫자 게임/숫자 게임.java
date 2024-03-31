@@ -3,20 +3,22 @@ class Solution {
 
     public int solution(int[] A, int[] B) {
         int answer = 0;
+        // 오름차순으로 정렬
         Arrays.sort(A);
         Arrays.sort(B);
-
         int indexA = 0;
         int indexB = 0;
-
-        while (indexB < A.length) {
-            if (A[indexA] < B[indexB]) {
+        
+        while(indexB < B.length) {
+            if(B[indexB] > A[indexA]){
                 indexB++;
                 indexA++;
                 answer++;
-            } else indexB++;
+            } else {
+                indexB++;
+            }
         }
-
+        
         return answer;
     }
 }
