@@ -3,84 +3,71 @@ class Solution {
 
     public String[] solution(String[][] plans) {
         List<String> answer = new ArrayList<>();
-        Queue<HomeWork> queue = new LinkedList<>();
-        Queue<HomeWork> remainQueue = new PriorityQueue<>((o1, o2) -> {
-            return o2.m - o1.m;
-        });
-
-        Arrays.sort(plans, (o1, o2) -> {
-            String[] split1 = o1[1].split(":");
-            String[] split2 = o2[1].split(":");
-            return (Integer.parseInt(split1[0]) * 60 + Integer.parseInt(split1[1])) - (Integer.parseInt(split2[0]) * 60 + Integer.parseInt(split2[1]));
-        });
-
-        for (String[] s : plans) {
-            String[] split = s[1].split(":");
-            queue.add(new HomeWork(
-                    s[0],
-                    Integer.parseInt(split[0]) * 60 + Integer.parseInt(split[1]),
-                    Integer.parseInt(s[2])));
+        Stack<Homework> stack = new Stack<>();
+        // 과제를 시간이 빠른 순으로 큐에서 나오도록 우선 순위 큐
+        Queue<Homework> queue = new PriorityQueue<>(Comparator.comparingInt(o -> o.time));
+        for (String[] str : plans) {
+            String[] split = str[1].split(":");
+            queue.add(
+                    new Homework(
+                            str[0],
+                            Integer.parseInt(split[0]) * 60 + Integer.parseInt(split[1]),
+                            Integer.parseInt(str[2])));
         }
-
-        int currentTime = queue.peek().m;
-
         while (!queue.isEmpty()) {
-            // 아직 다음 숙제를 시작할 시간이 안되었으면
-            // 남아있던 숙제를 한다.
-            while (!remainQueue.isEmpty()) {
-                if (queue.peek().m > currentTime) {
-                    HomeWork remainHW = remainQueue.poll();
-                    HomeWork next = queue.peek();
-                    // 다음 숙제 시작 전까지 남아 있던 숙제를 한다.
-                    int remainTime = next.m - currentTime;
-                    if (remainTime >= remainHW.time) {
-                        currentTime += remainHW.time;
-                        answer.add(remainHW.name);
-                    } else {
-                        currentTime += remainTime;
-                        remainHW.time -= remainTime;
-                        remainQueue.add(remainHW);
-                    }
-                } else break;
-            }
-            // 마지막 남은 숙제라면 정답에 추가하고 종료
             if (queue.size() == 1) {
-                answer.add(queue.poll().name);
+                Homework poll = queue.poll();
+                answer.add(poll.name);
                 break;
             }
-            currentTime = queue.peek().m;
-            // 현재 숙제를 얼만큼 할 수 있는지 체크
-            HomeWork current = queue.poll();
-            HomeWork next = queue.peek();
-            int remainTime = next.m - current.m;
-            // 현재 일을 다음 숙제 시작전까지 끝낼 수 있음
-            if (remainTime >= current.time) {
-                currentTime += current.time;
+            // 큐에서 pop한 과제와
+            Homework current = queue.poll();
+            // peek한 다음 과제를 비교하여
+            Homework next = queue.peek();
+            // peek 과제를 시작하기 전에 pop한 과제를 얼마나 수행할 수 있을지 계산
+            int remainTime = next.time - current.time;
+            // 다 끝냈으면 answer에 추가
+            if (remainTime >= current.playtime) {
                 answer.add(current.name);
-            } else {
-                currentTime += remainTime;
-                current.time -= remainTime;
-                remainQueue.add(current);
+                int remainAfterFinish = remainTime - current.playtime;
+                // 다 끝내고 peek 과제를 시작하기 전에 시간이 남았다면
+                while (remainAfterFinish > 0 && !stack.isEmpty()) {
+                    // 스택에서 pop을 하여 끝내지 못했던 과제를 수행
+                    Homework remainHW = stack.pop();
+                    if (remainAfterFinish >= remainHW.playtime) {
+                        answer.add(remainHW.name);
+                        remainAfterFinish -= remainHW.playtime;
+                    } else {
+                        remainHW.playtime -= remainAfterFinish;
+                        stack.push(remainHW);
+                        break;
+                    }
+                }
+            }
+            // 다 끝내지 못했다면 남은 시간을 계산하여 스택에 추가
+            else {
+                current.playtime -= remainTime;
+                stack.push(current);
             }
 
         }
 
-        while (!remainQueue.isEmpty()) {
-            answer.add(remainQueue.poll().name);
+        while (!stack.isEmpty()) {
+            answer.add(stack.pop().name);
         }
 
         return answer.toArray(new String[0]);
     }
 
-    public static class HomeWork {
+    public class Homework {
         String name;
-        int m;
         int time;
+        int playtime;
 
-        public HomeWork(String name, int m, int time) {
+        public Homework(String name, int time, int playtime) {
             this.name = name;
-            this.m = m;
             this.time = time;
+            this.playtime = playtime;
         }
     }
 }
