@@ -1,19 +1,17 @@
 class Solution {
 
     public int solution(int[] stones, int k) {
-        // 건널 수 있는 수 이분 탐색
+        // 최소 한명 건널 수 있따.
         int start = 1;
+        // 돌에 적힌 가장 큰 숫자만큼 친구들이 건널 수 있다
         int end = -1;
-        // 가장 많이 건널 수 있는 수는 돌들 중 가장 큰 숫자
         for (int s : stones) {
-            if (end < s) end = s;
+            if (s > end) end = s;
         }
 
         while (start <= end) {
-            // mid 명만큼 건널 수 있는지 확인
             int mid = (start + end) / 2;
 
-            // mid 명이 건널 수 있다
             if (isCanPass(stones, k, mid)) {
                 start = mid + 1;
             } else end = mid - 1;
