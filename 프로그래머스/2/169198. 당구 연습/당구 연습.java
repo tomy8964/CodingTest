@@ -4,35 +4,43 @@ class Solution {
         int[] answer = new int[balls.length];
 
         for (int b = 0; b < balls.length; b++) {
-            double minDistance = Integer.MAX_VALUE;
             int ballX = balls[b][0];
             int ballY = balls[b][1];
 
-            // x축, y축, x=n, y=m 대칭 이동
-            // x축 대칭 이동 후 길이 반환
-            // x 축 대칭 이동시 벽보다 공을 먼저 만날 경우 X
-            if (!(startX == ballX && startY > ballY)) {
-                minDistance = Math.min(minDistance, move(startX, -startY, ballX, ballY));
+            // 축에 대해 대칭하여 목표 공과의 거리를 구한다.
+            int distance = Integer.MAX_VALUE;
+            // x축에 대해 대칭
+            // 시작공이 x축에 원쿠션하기 전에 목표 공에 맞으면 안된다.
+            // 같은 x좌표에 목표 공이 시작 공보다 아래쪽에 있으면 안된다.
+            if (!(ballX == startX && ballY < startY)) {
+                distance = Math.min(distance, getDistance(startX, -startY, ballX, ballY));
             }
-            // y 축 대칭 이동시 벽보다 공을 먼저 만날 경우 X
-            if (!(startY == ballY && startX > ballX)) {
-                minDistance = Math.min(minDistance, move(-startX, startY, ballX, ballY));
+            // y축에 대해 대칭
+            // 시작공이 y축에 원쿠션하기 전에 목표 공에 맞으면 안된다.
+            // 같은 y좌표에 목표 공이 시작 공보다 왼쪽에 있으면 안된다.
+            if (!(ballY == startY && ballX < startX)) {
+                distance = Math.min(distance, getDistance(-startX, startY, ballX, ballY));
             }
-            // y = m 에 대해 대칭 이동시 벽보다 공을 먼저 만날 경우 X
-            if (!(startX == ballX && startY < ballY)) {
-                minDistance = Math.min(minDistance, move(startX, startY + (n - startY) * 2, ballX, ballY));
+            // x = m 축에 대칭
+            // 시작공이 x = m 축에 원쿠션하기 전에 목표 공에 맞으면 안된다.
+            // 같은 y좌표에 목표 공이 시작 공보다 오른쪽에 있으면 안된다.
+            if (!(ballY == startY && ballX > startX)) {
+                distance = Math.min(distance, getDistance((m - startX) * 2 + startX, startY, ballX, ballY));
             }
-            // x = n 애 대해 대칭 이동시 벽보다 공을 먼저 만날 경우 X
-            if (!(startY == ballY && startX < ballX)) {
-                minDistance = Math.min(minDistance, move(startX + (m - startX) * 2, startY, ballX, ballY));
+            // y = n 축에 대해 대칭
+            // 시작공이 y = n 축에 원쿠션하기 전에 목표 공에 맞으면 안된다.
+            // 같은 x좌표에 목표 공이 시작 공보다 위에 있으면 안된다.
+            if (!(ballX == startX && ballY > startY)) {
+                distance = Math.min(distance, getDistance(startX, (n - startY) * 2 + startY, ballX, ballY));
             }
-            answer[b] = (int) minDistance;
+            answer[b] = distance;
         }
 
         return answer;
     }
 
-    private double move(int moveX, int moveY, int ballX, int ballY) {
-        return Math.pow((ballX - moveX), 2) + Math.pow((ballY - moveY), 2);
+    // (x-x1)^2 + (y-y1)^2
+    private int getDistance(int startX, int startY, int ballX, int ballY) {
+        return (int) Math.pow(startX - ballX, 2) + (int) Math.pow(startY - ballY, 2);
     }
 }
