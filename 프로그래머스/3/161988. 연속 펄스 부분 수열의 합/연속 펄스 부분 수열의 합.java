@@ -2,27 +2,25 @@ import java.util.*;
 class Solution {
 
     public long solution(int[] sequence) {
-        long answer = 0;
-        // 펄스 수열은 짝수 인덱스에 -1을 곱하거나 홀수 인덱스에 -1을 곱하는 것이다.
+        // 펄스 수열 : 1 또는 -1로 시작하면서 1과 -1이 번갈아 나오는 수열
+        // 나올 수 있는 연속 펄스 수열은 1. 짝수에 -1을 곱한 수열 2. 홀수에 -1을 곱한 수열
         int[] sequence1 = new int[sequence.length];
         int[] sequence2 = new int[sequence.length];
-
         for (int i = 0; i < sequence.length; i++) {
-            // 짝수 인덱스인 경우
             if (i % 2 == 0) {
-                sequence1[i] = sequence[i];
-                sequence2[i] = -sequence[i];
-            } else {
-                sequence1[i] = -sequence[i];
+                sequence1[i] = sequence[i] * -1;
                 sequence2[i] = sequence[i];
+            } else {
+                sequence1[i] = sequence[i];
+                sequence2[i] = sequence[i] * -1;
             }
         }
-
-        // dp로 각 배열의 연속 부분 수열의 최대 합을 찾는다.
-        return Math.max(findMaxSum(sequence1), findMaxSum(sequence2));
+        // 연속 펄스 수열에서 가장 합이 큰 부분 수열을 찾는다.
+        return Math.max(find(sequence1), find(sequence2));
     }
 
-    public long findMaxSum(int[] array) {
+    public long find(int[] array) {
+        // dp 사용
         long[] dp = new long[array.length];
         dp[0] = array[0];
         for (int i = 1; i < array.length; i++) {
