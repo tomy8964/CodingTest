@@ -2,35 +2,32 @@ class Solution {
 
     public int solution(String[] board) {
         int answer = 1;
-        // "0" 선공, "X" 후공
+        // 선공이 "O", 후공이 "X"를 번갈아가면서
+        // 가로, 세로, 대각선으로 3개가 같은 표시가 만들어지면 같은 표시를 만든 사람이 승리 (빙고를 만들면 승리) 후 게임 종료
+        // 9칸이 모두 차서 더 이상 표시를 할 수 없는 경우에는 무승부로 게임이 종료
+
         // "O"를 표시할 차례인데 "X"를 표시하거나 반대로 "X"를 표시할 차례인데 "O"를 표시한다.
+        // "0"의 갯수가 "X"보다 1 많거나 같아야 한다.
         // 선공이나 후공이 승리해서 게임이 종료되었음에도 그 게임을 진행한다.
+        // "0"이 이긴 경우 "X"의 갯수는 "0"의 갯수보다 작아야 한다.
+        // "X"가 이긴 경우 "0"의 갯수는 "x"와 같아야 한다.
 
-        // "0"가 이겼는지 "X"가 이겼는지 확인
-        // 선공과 후공이 모두 빙고가 생길 수 없음
-        // "0"가 이겼다면 "0"의 갯수가 "X"의 갯수보다 많아야 함(같거나 적으면 안됨)
-        // "X"가 이겼다면 "0"의 갯수가 "X"의 갯수와 같아야 함
-
-        // 승패와 상관없이 선공인 "0"의 갯수가 "X" 갯수보다 같거나 많아야함
-        // "0"의 갯수가 "X"의 갯수보다 1개만 더 많아야 함
         int countO = 0;
         int countX = 0;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                char c = board[i].charAt(j);
+        for (String b : board) {
+            for (int i = 0; i < 3; i++) {
+                char c = b.charAt(i);
                 if (c == 'O') countO++;
                 if (c == 'X') countX++;
             }
         }
-        // 후공이 더 둔 경우
-        if (countO < countX) return 0;
-
-        // 선공이 연속으로 둔 경우
-        if (countO - 1 > countX) return 0;
+        // "O"를 표시할 차례인데 "X"를 표시하거나 반대로 "X"를 표시할 차례인데 "O"를 표시한다.
+        // "0"의 갯수가 "X"보다 1 많거나 같아야 한다.
+        if (countO < countX || countO > countX + 1) return 0;
 
         int bingoO = 0;
         int bingoX = 0;
-        // 대각선 빙고 체크
+        // 대각선 빙고 확인
         if (board[1].charAt(1) == 'O') {
             if (board[0].charAt(0) == 'O' && board[2].charAt(2) == 'O') bingoO++;
             if (board[0].charAt(2) == 'O' && board[2].charAt(0) == 'O') bingoO++;
@@ -39,22 +36,29 @@ class Solution {
             if (board[0].charAt(0) == 'X' && board[2].charAt(2) == 'X') bingoX++;
             if (board[0].charAt(2) == 'X' && board[2].charAt(0) == 'X') bingoX++;
         }
-        // 가로 빙고 체크
+        // 가로 빙고 확인
         for (int i = 0; i < 3; i++) {
-            if (board[i].equals("OOO")) bingoO++;
-            if (board[i].equals("XXX")) bingoX++;
+            if (board[i].charAt(0) == 'O') {
+                if (board[i].charAt(1) == 'O' && board[i].charAt(2) == 'O') bingoO++;
+            }
+            if (board[i].charAt(0) == 'X') {
+                if (board[i].charAt(1) == 'X' && board[i].charAt(2) == 'X') bingoX++;
+            }
         }
-        // 세로 빙고 체크
+        // 세로 빙고 확인
         for (int i = 0; i < 3; i++) {
-            if (board[0].charAt(i) == 'O' && board[1].charAt(i) == 'O' && board[2].charAt(i) == 'O') bingoO++;
-            if (board[0].charAt(i) == 'X' && board[1].charAt(i) == 'X' && board[2].charAt(i) == 'X') bingoX++;
+            if (board[0].charAt(i) == 'O') {
+                if (board[1].charAt(i) == 'O' && board[2].charAt(i) == 'O') bingoO++;
+            }
+            if (board[0].charAt(i) == 'X') {
+                if (board[1].charAt(i) == 'X' && board[2].charAt(i) == 'X') bingoX++;
+            }
         }
-
-        // 둘다 빙고가 있는 경우
+        // 선공이나 후공이 승리해서 게임이 종료되었음에도 그 게임을 진행한다.
         if (bingoO > 0 && bingoX > 0) return 0;
-        // 선공이 이겼는데 후공이 더 둔 경우
-        if (bingoO > 0 && countO <= countX) return 0;
-        // 후공이 이겼는데 선공이 한번 더 둔 경우
+        // "0"이 이긴 경우 "X"의 갯수는 "0"의 갯수보다 작아야 한다.
+        if (bingoO > 0 && countX >= countO) return 0;
+        // "X"가 이긴 경우 "0"의 갯수는 "x"와 같아야 한다.
         if (bingoX > 0 && countO > countX) return 0;
         return answer;
     }
