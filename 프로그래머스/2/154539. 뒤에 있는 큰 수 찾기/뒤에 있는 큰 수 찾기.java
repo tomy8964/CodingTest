@@ -4,24 +4,23 @@ class Solution {
     public int[] solution(int[] numbers) {
         int[] answer = new int[numbers.length];
         Stack<Integer> stack = new Stack<>();
-        // 자신보다 크면서 가장 가까이 있는 수를 뒷 큰수
-        answer[answer.length - 1] = -1;
+        // 맨 뒤에 있는 수 add
         stack.add(numbers[numbers.length - 1]);
-        for (int i = answer.length - 2; i > -1; i--) {
-            // 가장 가까운 숫자들을 보면서 나보다 큰 수를 찾는다.
-            while (!stack.isEmpty()) {
-                if (stack.peek() > numbers[i]) {
-                    answer[i] = stack.peek();
-                    stack.add(numbers[i]);
-                    break;
-                } else stack.pop();
+        answer[numbers.length - 1] = -1;
+        // 뒤에서 한칸 앞에서부터 앞으로 가면서 탐색
+        for (int i = numbers.length - 2; i > -1; i--) {
+            while (!stack.isEmpty() && numbers[i] >= stack.peek()) {
+                stack.pop();
             }
+            // stack을 다 탐색했는데도 뒷 큰수 발견 X
             if (stack.isEmpty()) {
+                stack.add(numbers[i]);
                 answer[i] = -1;
+            } else {
+                answer[i] = stack.peek();
                 stack.add(numbers[i]);
             }
         }
-
         return answer;
     }
 }
