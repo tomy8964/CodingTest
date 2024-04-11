@@ -2,34 +2,42 @@ import java.util.*;
 class Solution {
 
     public String solution(int n, int t, int m, String[] timetable) {
-        String answer = "";
         Queue<Integer> queue = new PriorityQueue<>();
         for (String time : timetable) {
             String[] split = time.split(":");
             queue.add(Integer.parseInt(split[0]) * 60 + Integer.parseInt(split[1]));
         }
 
-        int currentTime = 9 * 60; // 9:00 시 시작
+        // 9:00 첫 차
+        int currentTime = 9 * 60;
+        // 앉을 수 있는 자리수
         int seat = m;
-        int lastMan = 0;
+        // 버스에 마지막으로 탄 사람이 줄을 선 시간
+        int lastTime = 0;
         for (int i = 0; i < n; i++) {
-            // 탈 수 있는 자리 개수
             seat = m;
-            while (!queue.isEmpty() && currentTime >= queue.peek() && seat > 0) {
-                // 마지막 버스에 모든 자리가 찰 경우
+            // 앉을 수 있는 자리가 있고
+            // 아직 안탄 사람이 있으며
+            // 가장 많이 대기한 사람이 현재 이 시간에 버스를 탈 수 있는지
+            while (!queue.isEmpty() && seat > 0 && queue.peek() <= currentTime) {
+                // 이 자리가 마지막 자리이다.
                 if (seat == 1) {
-                    lastMan = queue.peek();
+                    lastTime = queue.peek();
                 }
-                queue.poll();
+                // 한명 앉음
                 seat--;
+                queue.poll();
             }
+            // 다음 버스 시간 조정
             currentTime += t;
         }
-        // 마지막 버스 도착 시간
+        // 마지막 버스 시간 재조정
         currentTime -= t;
-        // 마지막 버스까지 와서 다 태우고 자리가 남았을 경우 마지막 버스 도착시간에 오면 된다.
+
+        // 마지막 버스에 남은 좌석이 있다 -> 마지막 버스 도착 시간에 줄을 선다.
         if (seat > 0) return numToTime(currentTime);
-        else return numToTime(lastMan - 1);
+            // 마지막 버스에 남은 좌석이 없다 -> 마지막 버스에 마지막으로 탄 사람보다 1 분 빨리 온다.
+        else return numToTime(lastTime - 1);
     }
 
     public String numToTime(int num) {
