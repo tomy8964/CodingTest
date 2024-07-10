@@ -1,7 +1,6 @@
 import java.util.*;
 class Solution {
     public int solution(int n, int k) {
-        int answer = 0;
         boolean[] prime = new boolean[1_000_001];
         
         prime[0] = prime[1] = true; //소수 아님
@@ -13,21 +12,14 @@ class Solution {
             }
         }
         
-        String change = Integer.toString(n, k);
-        char[] arr = change.toCharArray();
-        StringBuilder sb = new StringBuilder();
+        int answer = 0;
         
-        for(int i = 0; i < arr.length; i++){
-            sb.append(arr[i]);
-            if(arr[i] == '0'){
-                sb.deleteCharAt(sb.length() - 1);
-                if(sb.length() == 0) continue;
-                if(isPrime(sb.toString(), prime)) answer++;
-                sb = new StringBuilder();
-            }
+        String[] arr = Integer.toString(n, k).split("0");
+        
+        for(String s : arr){
+            if(s.length() == 0) continue;
+            if(isPrime(s, prime)) answer++;
         }
-        
-        if(sb.length() != 0 && isPrime(sb.toString(), prime)) answer++;
         
         return answer;
     }
