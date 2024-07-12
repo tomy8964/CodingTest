@@ -1,31 +1,34 @@
-import java.util.ArrayList;
-
+import java.util.*;
 class Solution {
-  public int[] solution(String msg) {
-    ArrayList<String> dic = new ArrayList<String>();
-    ArrayList<Integer> result = new ArrayList<Integer>();
-
-    for(int i = 0 ; i < 26; i++) {
-        dic.add(String.valueOf((char)('A'+i)));
-    }
-
-    for(int i = 0 ; i < msg.length() ; i++) {
-        for(int j = dic.size()-1 ; j >= 0 ; j--) {
-            if(msg.substring(i).startsWith(dic.get(j))) {
-                i += dic.get(j).length()-1;
-                result.add(j+1);
-                if(i+1 < msg.length())
-                    dic.add(dic.get(j)+msg.charAt(i+1));
-                break;
-            }
+    public int[] solution(String msg) {
+        List<String> list = new ArrayList<>();
+        List<Integer> result = new ArrayList<>();
+        for(int i = 65; i < 91; i++){
+            list.add(String.valueOf((char) i));
         }
+        
+        for(int i = 0; i < msg.length(); i++){
+            String s = String.valueOf(msg.charAt(i));
+            System.out.print(s + " ");
+            int index = list.indexOf(s) + 1;
+            while(list.contains(s) && i < msg.length() - 1){
+                index = list.indexOf(s) + 1;
+                s += String.valueOf(msg.charAt(++i));
+            }
+            if(!list.contains(s)){
+                list.add(s);
+                i--;
+            }
+            if(i == msg.length() - 1) index = list.indexOf(s) + 1;
+            result.add(index);
+            System.out.println(s + " " + index + " " + (list.indexOf(s) + 1));
+        }
+
+        int[] answer = new int[result.size()];
+
+        for(int i = 0 ; i < result.size() ; i++) 
+            answer[i] = result.get(i);
+
+        return answer;  
     }
-
-    int[] answer = new int[result.size()];
-
-    for(int i = 0 ; i < result.size() ; i++) 
-        answer[i] = result.get(i);
-
-    return answer;  
-  }
 }
