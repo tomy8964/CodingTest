@@ -12,6 +12,6 @@ jobs:
       - name: Trigger repository dispatch
         uses: peter-evans/repository-dispatch@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PROGRAMMERS_TOKEN }}
           repository: tomy8964/github-programmers-rank
           event-type: trigger-workflow
