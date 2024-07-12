@@ -1,0 +1,43 @@
+{
+  "name": "github-programmers-rank",
+  "version": "1.0.0",
+  "description": "깃허브의 프로그래머스 순위를 나타내는 지표를 svg 형식으로 제공합니다.",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "format": "prettier --write '**/*.ts'",
+    "format-check": "prettier --check '**/*.ts'",
+    "lint": "eslint src/**/*.ts",
+    "package": "ncc build --source-map --license licenses.txt",
+    "test": "jest --passWithNoTests --reporters=default --reporters=jest-junit --coverage",
+    "start": "node lib/app.js",
+    "all": "npm run build && npm run format && npm run lint && npm run package && npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/libtv/github-programmers-rank.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/libtv/github-programmers-rank/issues"
+  },
+  "homepage": "https://github.com/libtv/github-programmers-rank#readme",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "child_process": "^1.0.2",
+    "dotenv": "^16.1.4",
+    "eslint-plugin-jest": "^27.2.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "save": "^2.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.2.5",
+    "@typescript-eslint/eslint-plugin": "^5.59.8",
+    "@typescript-eslint/parser": "^5.59.8",
+    "eslint": "^8.42.0",
+    "prettier": "^2.8.8",
+    "typescript": "^5.1.3"
+  }
+}
