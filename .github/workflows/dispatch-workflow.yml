@@ -13,5 +13,5 @@ jobs:
         uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.PROGRAMMERS_TOKEN }}
-          repository: tomy8964/GitHub-Programmers-Rank-Badge
+          repository: tomy8964/github-programmers-rank
           event-type: trigger-workflow
