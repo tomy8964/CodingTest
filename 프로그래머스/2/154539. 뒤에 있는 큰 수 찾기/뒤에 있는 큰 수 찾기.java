@@ -8,10 +8,6 @@ class Solution {
         stack.add(0);
         
         for(int i = 1; i < numbers.length; i++){
-            if(stack.isEmpty()) {
-                stack.add(i);
-                continue;
-            }
             while(!stack.isEmpty() && numbers[stack.peek()] < numbers[i]) {
                 answer[stack.pop()] = numbers[i];
             }
